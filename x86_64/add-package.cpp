@@ -43,9 +43,9 @@ int main(int argc, char** argv)
 			std::cout << "copying file \033[31munsuccessful\033[0m.\n";
 		}
 		
-		system("fish -c unconfigure.fish");
-		system(("fish -c repo-add xor-crypto-repo.db.tar.gz " + filename).c_str());
-		system("fish -c configure.fish");
+		system("unconfigure.fish");
+		system(("repo-add xor-crypto-repo.db.tar.gz \'" + filename + "\'").c_str());
+		system("configure.fish");
 		system("git add *");
 		system(("git commit -m \"added " + filename + " package\"").c_str());
 		system("git push");
