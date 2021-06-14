@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sys/stat.h>
 #include <sys/sendfile.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 std::string& get_filename(const std::string& path)
 {
@@ -18,7 +20,11 @@ int main(int argc, char** argv)
 {
 	if (argc >= 2)
 	{
-		FILE* fin = ::fopen(argv[1], "rb");
+		int input, output;
+		if ((input = open(argv[1], O_RDONLY)) == -1)
+		{
+			return -1;
+		}
 		std::string& filename = get_filename(argv[1]);
 		
 		struct stat st{ };
@@ -27,12 +33,16 @@ int main(int argc, char** argv)
 			::remove(filename.c_str());
 		}
 		
-		FILE* fout = ::fopen(filename.c_str(), "wb");
+		if ((output = creat(filename.c_str(), 0644)) == -1)
+		{
+			::close(input);
+			return -1;
+		}
 		
-		::fstat(fin->_fileno, &st);
+		::fstat(input, &st);
 		
 		off_t copied;
-		::sendfile(fout->_fileno, fin->_fileno, &copied, st.st_size);
+		::sendfile(output, input, &copied, st.st_size);
 		
 		if (copied == st.st_size)
 		{
@@ -50,8 +60,8 @@ int main(int argc, char** argv)
 		system(("git commit -m \"added " + filename + " package\"").c_str());
 		system("git push");
 		
-		::fclose(fin);
-		::fclose(fout);
+		::close(input);
+		::close(output);
 	}
 	else
 	{
