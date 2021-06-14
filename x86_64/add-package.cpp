@@ -41,10 +41,9 @@ int main(int argc, char** argv)
 		
 		::fstat(input, &st);
 		
-		off_t copied;
-		::sendfile(output, input, &copied, st.st_size);
+		off_t offset = 0;
 		
-		if (copied == st.st_size)
+		if (::sendfile(output, input, &offset, st.st_size) == st.st_size)
 		{
 			std::cout << "copying file \033[32msuccessful\033[0m.\n";
 		}
