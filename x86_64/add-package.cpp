@@ -20,9 +20,15 @@ int main(int argc, char** argv)
 	{
 		FILE* fin = ::fopen(argv[1], "rb");
 		std::string& filename = get_filename(argv[1]);
-		FILE* fout = ::fopen(filename.c_str(), "wb");
 		
 		struct stat st{ };
+		if (::stat(filename.c_str(), &st) >= 0)
+		{
+			::remove(filename.c_str());
+		}
+		
+		FILE* fout = ::fopen(filename.c_str(), "wb");
+		
 		::fstat(fin->_fileno, &st);
 		
 		off_t copied;
