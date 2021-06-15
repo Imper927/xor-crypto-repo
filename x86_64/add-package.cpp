@@ -28,7 +28,7 @@ void add_file_to_repo(const char* path)
 	int input, output;
 	if ((input = open(path, O_RDONLY)) == -1)
 	{
-		std::cerr << "opening " << path << " failed : " << ::strerror(errno) << "\n";
+		std::cerr << "opening " << path << " as input failed : " << ::strerror(errno) << "\n";
 		exit(-1);
 	}
 	std::string& filename = get_filename(path);
@@ -41,7 +41,7 @@ void add_file_to_repo(const char* path)
 	
 	if ((output = creat(filename.c_str(), 0644)) == -1)
 	{
-		std::cerr << "opening " << filename << " failed : " << ::strerror(errno) << "\n";
+		std::cerr << "opening " << filename << " as output failed : " << ::strerror(errno) << "\n";
 		::close(input);
 		exit(-1);
 	}
