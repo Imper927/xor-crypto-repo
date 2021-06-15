@@ -5,6 +5,12 @@
 #include <fcntl.h>
 #include <cstring>
 
+void error(const std::string& message)
+{
+	std::cerr << "\033[31m\033[1merror\033[0m : " << message << "\n";
+	throw std::runtime_error(message);
+}
+
 std::string& get_filename(const std::string& path)
 {
 	for (int i = path.size() - 1; i >= 0; --i)
@@ -63,18 +69,103 @@ void add_file_to_repo(const char* path)
 	system(("git commit -m \"added " + filename + " package\"").c_str());
 }
 
+std::string& get_s_in_fmt(const std::string& str, const std::string& format)
+{
+	auto* result = new std::string;
+	int pos_prefix_end = -1;
+	for (int i = 0; i < format.size() && i < str.size(); ++i)
+	{
+		if (format[i] == '%' && format[i + 1] == 's')
+		{
+			pos_prefix_end = i;
+			break;
+		}
+		else if (str[i] != format[i])
+		{
+			break;
+		}
+	}
+	
+	if (pos_prefix_end < 0)
+	{
+		error("prefix not found in \'str\'");
+	}
+	
+	int j = pos_prefix_end;
+	int i = pos_prefix_end + 2, pos_s = j;
+	int delta = 0, delta2 = 0;
+	for (; j < str.size() && i < format.size();)
+	{
+		bool is_eq = true;
+		for (int k = i, l = j;; ++k, ++l)
+		{
+			if ((format.size() - k >= 2 && format[k] == '%' && format[k + 1] == 's') || k >= format.size())
+			{
+				delta2 += k - i;
+				j = l;
+				break;
+			}
+			else if (str[l] != format[k])
+			{
+				is_eq = false;
+				break;
+			}
+		}
+		if (is_eq)
+		{
+			(*result) += str.substr(pos_s, delta);
+			i += delta2 + 2;
+			delta = 0;
+			delta2 = 0;
+			pos_s = j;
+		}
+		else
+		{
+			++delta;
+			++j;
+		}
+	}
+	if (format[i - 2] == '%' && format[i - 1] == 's')
+	{
+		(*result) += str.substr(j);
+	}
+	return *result;
+}
+
+void delete_file_from_repo(const char* path)
+{
+	system("git add *");
+	system("fish unconfigure.fish");
+	system(("repo-remove xor-crypto-repo.db.tar.gz \'" + std::string(path) + "\'").c_str());
+	system("fish configure.fish");
+	::remove(path);
+	system(("git commit -m \"removed " + get_filename(path) + " package\"").c_str());
+}
+
 int main(int argc, char** argv)
 {
-	if (argc >= 2)
+//	std::string& res = get_s_in_fmt("some text which must be splitted", "s%sme%swh%sch%ste");
+//	std::cout << res;
+	if (argc >= 3)
 	{
-		for (int i = 1; i < argc; ++i)
+		if (!::strcmp(argv[1], "add"))
 		{
-			add_file_to_repo(argv[i]);
+			for (int i = 2; i < argc; ++i)
+			{
+				add_file_to_repo(argv[i]);
+			}
+		}
+		else if (!strcmp(argv[1], "del"))
+		{
+			for (int i = 2; i < argc; ++i)
+			{
+				delete_file_from_repo(argv[i]);
+			}
 		}
 		system("git push");
 	}
 	else
 	{
-		std::cout << argv[0] << " <package...>\n";
+		std::cout << argv[0] << " add/del <package...>\n";
 	}
 }
