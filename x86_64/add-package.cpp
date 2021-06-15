@@ -69,6 +69,15 @@ void add_file_to_repo(const char* path)
 	system(("git commit -m \"added " + filename + " package\"").c_str());
 }
 
+void include_file_to_repo(const char* path)
+{
+	system("fish unconfigure.fish");
+	system(("repo-add xor-crypto-repo.db.tar.gz \'" + std::string(path) + "\'").c_str());
+	system("fish configure.fish");
+	system("git add *");
+	system(("git commit -m \"included " + std::string(path) + " package\"").c_str());
+}
+
 std::string& get_s_in_fmt(const std::string& str, const std::string& format)
 {
 	auto* result = new std::string;
@@ -162,10 +171,17 @@ int main(int argc, char** argv)
 				delete_file_from_repo(argv[i]);
 			}
 		}
+		else if (!strcmp(argv[1], "include"))
+		{
+			for (int i = 2; i < argc; ++i)
+			{
+				include_file_to_repo(argv[i]);
+			}
+		}
 		system("git push");
 	}
 	else
 	{
-		std::cout << argv[0] << " add/del <package...>\n";
+		std::cout << argv[0] << " add/del/include <package...>\n";
 	}
 }
