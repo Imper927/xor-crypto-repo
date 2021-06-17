@@ -141,14 +141,14 @@ std::string& get_s_in_fmt(const std::string& str, const std::string& format)
 	return *result;
 }
 
-void delete_file_from_repo(const char* path)
+void delete_package_from_repo(const char* package_name)
 {
 	system("git add *");
 	system("fish unconfigure.fish");
-	system(("repo-remove xor-crypto-repo.db.tar.gz \'" + std::string(path) + "\'").c_str());
+	system(("repo-remove xor-crypto-repo.db.tar.gz \'" + std::string(package_name) + "\'").c_str());
 	system("fish configure.fish");
-	::remove(path);
-	system(("git commit -m \"removed " + get_filename(path) + " package\"").c_str());
+	system(("rm -f \'" + std::string(package_name) + "*\'").c_str());
+	system(("git commit -m \"removed " + get_filename(package_name) + " package\"").c_str());
 }
 
 int main(int argc, char** argv)
@@ -168,7 +168,7 @@ int main(int argc, char** argv)
 		{
 			for (int i = 2; i < argc; ++i)
 			{
-				delete_file_from_repo(argv[i]);
+				delete_package_from_repo(argv[i]);
 			}
 		}
 		else if (!strcmp(argv[1], "include"))
@@ -178,7 +178,7 @@ int main(int argc, char** argv)
 				include_file_to_repo(argv[i]);
 			}
 		}
-		system("git push");
+//		system("git push");
 	}
 	else
 	{
