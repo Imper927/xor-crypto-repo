@@ -11,6 +11,51 @@
 termios* stdin_defaults = nullptr;
 termios* stdout_defaults = nullptr;
 
+inline void setting1()
+{
+	if (stdin_defaults == nullptr)
+	{
+		stdin_defaults = new termios;
+	}
+	::tcgetattr(0, stdin_defaults);
+	struct termios settings = *stdin_defaults;
+	settings.c_lflag &= (~ICANON);
+	settings.c_lflag &= (~ECHO);
+	settings.c_cc[VTIME] = 0;
+	settings.c_cc[VMIN] = 1;
+	::tcsetattr(0, TCSANOW, &settings);
+}
+
+inline void setting2()
+{
+	if (stdout_defaults == nullptr)
+	{
+		stdout_defaults = new termios;
+	}
+	::tcgetattr(1, stdout_defaults);
+	struct termios settings = *stdout_defaults;
+	settings.c_lflag &= (~ICANON);
+	settings.c_lflag &= (~ECHO);
+	settings.c_cc[VTIME] = 0;
+	settings.c_cc[VMIN] = 1;
+	::tcsetattr(1, TCSANOW, &settings);
+}
+
+inline void default_()
+{
+	if (stdin_defaults != nullptr)
+	{
+		::tcsetattr(0, TCSANOW, stdin_defaults);
+		stdin_defaults = nullptr;
+	}
+	
+	if (stdout_defaults != nullptr)
+	{
+		::tcsetattr(1, TCSANOW, stdout_defaults);
+		stdout_defaults = nullptr;
+	}
+}
+
 void error(const std::string& message)
 {
 	std::cerr << "\033[31m\033[1merror\033[0m : " << message << "\n";
@@ -107,6 +152,8 @@ bool ask_for_deletion(const char* what)
 
 void add_file_to_repo(const char* path)
 {
+	setting1();
+	
 	std::string& filename = get_filename(path);
 	
 	std::string package_name, epoch, version, release, package_arch;
@@ -181,6 +228,7 @@ void add_file_to_repo(const char* path)
 	::close(input);
 	::close(output);
 	
+	default_();
 	
 	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + filename
 			+ "\'; fish configure.fish; git add *; git commit -m \'added " + filename + " package\'\"").c_str());
@@ -199,54 +247,8 @@ void delete_package_from_repo(const char* package_name)
 			+ "\'*.pkg.tar.zst; git commit -m \'removed " + get_filename(package_name) + " package\'\"").c_str());
 }
 
-inline void setting1()
-{
-	if (stdin_defaults == nullptr)
-	{
-		stdin_defaults = new termios;
-	}
-	::tcgetattr(0, stdin_defaults);
-	struct termios settings = *stdin_defaults;
-	settings.c_lflag &= (~ICANON);
-	settings.c_lflag &= (~ECHO);
-	settings.c_cc[VTIME] = 0;
-	settings.c_cc[VMIN] = 1;
-	::tcsetattr(0, TCSANOW, &settings);
-}
-
-inline void setting2()
-{
-	if (stdout_defaults == nullptr)
-	{
-		stdout_defaults = new termios;
-	}
-	::tcgetattr(1, stdout_defaults);
-	struct termios settings = *stdout_defaults;
-	settings.c_lflag &= (~ICANON);
-	settings.c_lflag &= (~ECHO);
-	settings.c_cc[VTIME] = 0;
-	settings.c_cc[VMIN] = 1;
-	::tcsetattr(1, TCSANOW, &settings);
-}
-
-inline void default_()
-{
-	if (stdin_defaults != nullptr)
-	{
-		::tcsetattr(0, TCSANOW, stdin_defaults);
-		stdin_defaults = nullptr;
-	}
-	
-	if (stdout_defaults != nullptr)
-	{
-		::tcsetattr(1, TCSANOW, stdout_defaults);
-		stdout_defaults = nullptr;
-	}
-}
-
 int main(int argc, char** argv)
 {
-	setting1();
 //	std::string& res = get_s_in_fmt("some text which must be splitted", "s%sme%swh%sch%ste");
 //	std::cout << res;
 	if (argc >= 3)
@@ -280,5 +282,4 @@ int main(int argc, char** argv)
 	{
 		std::cout << argv[0] << " add/del/include <package...>\n";
 	}
-	default_();
 }
