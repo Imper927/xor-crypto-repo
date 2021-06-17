@@ -170,6 +170,7 @@ int main(int argc, char** argv)
 			}
 		}
 		system("git push");
+		std::cout << "\033[32mgit \033[31mdiff\033[0m :\n";
 		system("git diff");
 	}
 	else
