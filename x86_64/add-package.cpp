@@ -169,7 +169,8 @@ int main(int argc, char** argv)
 				include_file_to_repo(argv[i]);
 			}
 		}
-//		system("git push");
+		system("git push");
+		system("git diff");
 	}
 	else
 	{
