@@ -143,11 +143,14 @@ std::string& get_s_in_fmt(const std::string& str, const std::string& format)
 
 void delete_package_from_repo(const char* package_name)
 {
+	std::cout << "\033[32mgit add *\033[0m\n";
 	system("git add *");
 	system("fish unconfigure.fish");
+	std::cout << "\033[32mrepo-remove ...\033[0m\n";
 	system(("repo-remove xor-crypto-repo.db.tar.gz \'" + std::string(package_name) + "\'").c_str());
 	system("fish configure.fish");
-	system(("rm -f \'" + std::string(package_name) + "*\'").c_str());
+	std::cout << "\033[32mrm -f [pkgname]\033[0m\n";
+	system(("rm -f \'" + std::string(package_name) + "\'*.pkg.tar.zst").c_str());
 	system(("git commit -m \"removed " + get_filename(package_name) + " package\"").c_str());
 }
 
