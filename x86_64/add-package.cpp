@@ -188,7 +188,7 @@ void add_file_to_repo(const char* path)
 	
 	if (ask_for_deletion((package_name + " files").c_str()))
 	{
-		system(("rm -f \'" + package_name + "\'*.pkg.tar.zst").c_str());
+		system(("fish -c \"git add *; rm -f \'" + package_name + "\'*.pkg.tar.zst; git commit -m \'removed old " + package_name + " package\'\"").c_str());
 	}
 	
 	
@@ -244,7 +244,7 @@ void delete_package_from_repo(const char* package_name)
 {
 	system(("fish -c \"git add *; fish unconfigure.fish; repo-remove xor-crypto-repo.db.tar.gz \'"
 			+ std::string(package_name) + "\'; fish configure.fish; rm -f \'" + std::string(package_name)
-			+ "\'*.pkg.tar.zst; git commit -m \'removed " + get_filename(package_name) + " package\'\"").c_str());
+			+ "\'*.pkg.tar.zst; git commit -m \'removed " + package_name + " package\'\"").c_str());
 }
 
 int main(int argc, char** argv)
