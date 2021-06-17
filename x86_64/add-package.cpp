@@ -62,20 +62,14 @@ void add_file_to_repo(const char* path)
 	::close(input);
 	::close(output);
 	
-	system("fish unconfigure.fish");
-	system(("repo-add xor-crypto-repo.db.tar.gz \'" + filename + "\'").c_str());
-	system("fish configure.fish");
-	system("git add *");
-	system(("git commit -m \"added " + filename + " package\"").c_str());
+	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + filename
+			+ "\'; fish configure.fish; git add *; git commit -m \'added " + filename + " package\'\"").c_str());
 }
 
 void include_file_to_repo(const char* path)
 {
-	system("fish unconfigure.fish");
-	system(("repo-add xor-crypto-repo.db.tar.gz \'" + std::string(path) + "\'").c_str());
-	system("fish configure.fish");
-	system("git add *");
-	system(("git commit -m \"included " + std::string(path) + " package\"").c_str());
+	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + std::string(path)
+			+ "\'; fish configure.fish; git add *; git commit -m \'included " + std::string(path) + " package\'\"").c_str());
 }
 
 std::string& get_s_in_fmt(const std::string& str, const std::string& format)
@@ -143,15 +137,9 @@ std::string& get_s_in_fmt(const std::string& str, const std::string& format)
 
 void delete_package_from_repo(const char* package_name)
 {
-	std::cout << "\033[32mgit add *\033[0m\n";
-	system("git add *");
-	system("fish unconfigure.fish");
-	std::cout << "\033[32mrepo-remove ...\033[0m\n";
-	system(("repo-remove xor-crypto-repo.db.tar.gz \'" + std::string(package_name) + "\'").c_str());
-	system("fish configure.fish");
-	std::cout << "\033[32mrm -f [pkgname]\033[0m\n";
-	system(("rm -f \'" + std::string(package_name) + "\'*.pkg.tar.zst").c_str());
-	system(("git commit -m \"removed " + get_filename(package_name) + " package\"").c_str());
+	system(("fish -c \"git add *; fish unconfigure.fish; repo-remove xor-crypto-repo.db.tar.gz \'"
+			+ std::string(package_name) + "\'; fish configure.fish; rm -f \'" + std::string(package_name)
+			+ "\'*.pkg.tar.zst; git commit -m \'removed " + get_filename(package_name) + " package\'\"").c_str());
 }
 
 int main(int argc, char** argv)
