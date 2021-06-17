@@ -4,6 +4,12 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstring>
+#include <termios.h>
+#include <climits>
+#include <cstdarg>
+
+termios* stdin_defaults = nullptr;
+termios* stdout_defaults = nullptr;
 
 void error(const std::string& message)
 {
@@ -11,69 +17,11 @@ void error(const std::string& message)
 	throw std::runtime_error(message);
 }
 
-std::string& get_filename(const std::string& path)
+void get_s_in_fmt(const std::string& str, const std::string& format, ...)
 {
-	for (int i = path.size() - 1; i >= 0; --i)
-	{
-		if (path[i] == '/')
-		{
-			return *new std::string(path.substr(i + 1));
-		}
-	}
-	return *new std::string;
-}
-
-void add_file_to_repo(const char* path)
-{
-	int input, output;
-	if ((input = open(path, O_RDONLY)) == -1)
-	{
-		std::cerr << "opening " << path << " as input failed : " << ::strerror(errno) << "\n";
-		exit(-1);
-	}
-	std::string& filename = get_filename(path);
+	va_list args;
+	va_start(args, format);
 	
-	struct stat st{ };
-	if (::stat(filename.c_str(), &st) >= 0)
-	{
-		::remove(filename.c_str());
-	}
-	
-	if ((output = creat(filename.c_str(), 0644)) == -1)
-	{
-		std::cerr << "opening " << filename << " as output failed : " << ::strerror(errno) << "\n";
-		::close(input);
-		exit(-1);
-	}
-	
-	::fstat(input, &st);
-	
-	off_t offset = 0;
-	
-	if (::sendfile(output, input, &offset, st.st_size) == st.st_size)
-	{
-		std::cout << "copying file \033[32msuccessful\033[0m.\n";
-	}
-	else
-	{
-		std::cout << "copying file \033[31munsuccessful\033[0m.\n";
-	}
-	
-	::close(input);
-	::close(output);
-	
-	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + filename
-			+ "\'; fish configure.fish; git add *; git commit -m \'added " + filename + " package\'\"").c_str());
-}
-
-void include_file_to_repo(const char* path)
-{
-	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + std::string(path)
-			+ "\'; fish configure.fish; git add *; git commit -m \'included " + std::string(path) + " package\'\"").c_str());
-}
-
-std::string& get_s_in_fmt(const std::string& str, const std::string& format)
-{
 	auto* result = new std::string;
 	int pos_prefix_end = -1;
 	for (int i = 0; i < format.size() && i < str.size(); ++i)
@@ -116,7 +64,7 @@ std::string& get_s_in_fmt(const std::string& str, const std::string& format)
 		}
 		if (is_eq)
 		{
-			(*result) += str.substr(pos_s, delta);
+			*va_arg(args, std::string*) = str.substr(pos_s, delta);
 			i += delta2 + 2;
 			delta = 0;
 			delta2 = 0;
@@ -130,9 +78,118 @@ std::string& get_s_in_fmt(const std::string& str, const std::string& format)
 	}
 	if (format[i - 2] == '%' && format[i - 1] == 's')
 	{
-		(*result) += str.substr(j);
+		*va_arg(args, std::string*) = str.substr(j);
 	}
-	return *result;
+	
+	va_end(args);
+}
+
+std::string& get_filename(const std::string& path)
+{
+	for (int i = path.size() - 1; i >= 0; --i)
+	{
+		if (path[i] == '/')
+		{
+			return *new std::string(path.substr(i + 1));
+		}
+	}
+	return *new std::string;
+}
+
+bool ask_for_deletion(const char* what)
+{
+	std::cout << "\033[36m" << what << "\033[0m will be \033[31mdeleted\033[0m. Sure?(y/N): ";
+	char c = std::cin.get();
+	if (c != '\n') std::cout << c << "\n";
+	else std::cout << '\n';
+	return c == 'y' || c == 'Y';
+}
+
+void add_file_to_repo(const char* path)
+{
+	std::string& filename = get_filename(path);
+	
+	std::string package_name, epoch, version, release, package_arch;
+	get_s_in_fmt(filename.c_str(), "%s-%s:%s-%s-%s.pkg.tar.zst", &package_name, &epoch, &version, &release, &package_arch);
+	
+	int start = 0;
+	bool num = false;
+	for (int i = 0; i < epoch.size(); ++i)
+	{
+		if (epoch[i] < '0' || epoch[i] > '9')
+		{
+			num = false;
+			start = -1;
+		}
+		else
+		{
+			if (!num)
+			{
+				start = i;
+				num = true;
+			}
+		}
+	}
+	
+	if (start > 0)
+	{
+		package_name += '-';
+		package_name += epoch.substr(0, start);
+		package_name.pop_back();
+		epoch = epoch.substr(start);
+	}
+	
+	if (ask_for_deletion((package_name + " files").c_str()))
+	{
+		system(("rm -f \'" + package_name + "\'*.pkg.tar.zst").c_str());
+	}
+	
+	
+	int input, output;
+	if ((input = open(path, O_RDONLY)) == -1)
+	{
+		std::cerr << "opening " << path << " as input failed : " << ::strerror(errno) << "\n";
+		exit(-1);
+	}
+	
+	struct stat st{ };
+	if (::stat(filename.c_str(), &st) >= 0)
+	{
+		::remove(filename.c_str());
+	}
+	
+	if ((output = creat(filename.c_str(), 0644)) == -1)
+	{
+		std::cerr << "opening " << filename << " as output failed : " << ::strerror(errno) << "\n";
+		::close(input);
+		exit(-1);
+	}
+	
+	::fstat(input, &st);
+	
+	off_t offset = 0;
+	
+	if (::sendfile(output, input, &offset, st.st_size) == st.st_size)
+	{
+		std::cout << "copying file \033[32msuccessful\033[0m.\n";
+	}
+	else
+	{
+		std::cout << "copying file \033[31munsuccessful\033[0m.\n";
+	}
+	
+	::close(input);
+	::close(output);
+	
+	
+	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + filename
+			+ "\'; fish configure.fish; git add *; git commit -m \'added " + filename + " package\'\"").c_str());
+}
+
+void include_file_to_repo(const char* path)
+{
+	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + std::string(path)
+			+ "\'; fish configure.fish; git add *; git commit -m \'included " + std::string(path) + " package\'\"").c_str());
 }
 
 void delete_package_from_repo(const char* package_name)
@@ -142,8 +199,54 @@ void delete_package_from_repo(const char* package_name)
 			+ "\'*.pkg.tar.zst; git commit -m \'removed " + get_filename(package_name) + " package\'\"").c_str());
 }
 
+inline void setting1()
+{
+	if (stdin_defaults == nullptr)
+	{
+		stdin_defaults = new termios;
+	}
+	::tcgetattr(0, stdin_defaults);
+	struct termios settings = *stdin_defaults;
+	settings.c_lflag &= (~ICANON);
+	settings.c_lflag &= (~ECHO);
+	settings.c_cc[VTIME] = 0;
+	settings.c_cc[VMIN] = 1;
+	::tcsetattr(0, TCSANOW, &settings);
+}
+
+inline void setting2()
+{
+	if (stdout_defaults == nullptr)
+	{
+		stdout_defaults = new termios;
+	}
+	::tcgetattr(1, stdout_defaults);
+	struct termios settings = *stdout_defaults;
+	settings.c_lflag &= (~ICANON);
+	settings.c_lflag &= (~ECHO);
+	settings.c_cc[VTIME] = 0;
+	settings.c_cc[VMIN] = 1;
+	::tcsetattr(1, TCSANOW, &settings);
+}
+
+inline void default_()
+{
+	if (stdin_defaults != nullptr)
+	{
+		::tcsetattr(0, TCSANOW, stdin_defaults);
+		stdin_defaults = nullptr;
+	}
+	
+	if (stdout_defaults != nullptr)
+	{
+		::tcsetattr(1, TCSANOW, stdout_defaults);
+		stdout_defaults = nullptr;
+	}
+}
+
 int main(int argc, char** argv)
 {
+	setting1();
 //	std::string& res = get_s_in_fmt("some text which must be splitted", "s%sme%swh%sch%ste");
 //	std::cout << res;
 	if (argc >= 3)
@@ -177,4 +280,5 @@ int main(int argc, char** argv)
 	{
 		std::cout << argv[0] << " add/del/include <package...>\n";
 	}
+	default_();
 }
