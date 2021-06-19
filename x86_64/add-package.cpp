@@ -5,7 +5,6 @@
 #include <fcntl.h>
 #include <cstring>
 #include <termios.h>
-#include <climits>
 #include <cstdarg>
 
 termios* stdin_defaults = nullptr;
