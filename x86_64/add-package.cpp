@@ -188,7 +188,7 @@ void add_file_to_repo(const char* path)
 	if (ask_for_deletion((package_name + " files").c_str()))
 	{
 		std::cout << "\n\033[32m" << package_name << "\033[0m\n";
-		system(("fish -c \"git add *; rm -f \'" + package_name + "\'*.pkg.tar.zst; git commit -m \'removed old " + package_name + " package\'\"").c_str());
+		system(("fish -c \"git add *; rm -f *\'" + package_name + "\'*.pkg.tar.zst; git commit -m \'removed old " + package_name + " package\'\"").c_str());
 	}
 	
 	
