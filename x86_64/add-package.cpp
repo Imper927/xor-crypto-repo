@@ -142,11 +142,11 @@ std::string& get_filename(const std::string& path)
 
 bool ask_for_deletion(const char* what)
 {
-	std::cout << "\033[36m" << what << "\033[0m will be \033[31mdeleted\033[0m. Sure?(y/N): ";
+	std::cout << "\033[36m" << what << "\033[0m will be \033[31mdeleted\033[0m. Sure?(Y/n): ";
 	char c = std::cin.get();
 	if (c != '\n') std::cout << c << "\n";
 	else std::cout << '\n';
-	return c == 'y' || c == 'Y';
+	return c != 'n' || c != 'N';
 }
 
 void add_file_to_repo(const char* path)
