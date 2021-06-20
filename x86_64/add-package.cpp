@@ -187,8 +187,7 @@ void add_file_to_repo(const char* path)
 	
 	if (ask_for_deletion((package_name + " files").c_str()))
 	{
-		std::cout << "\n\033[32m" << package_name << "\033[0m\n";
-		system(("fish -c \"git add *; rm -f *\'" + package_name + "\'*.pkg.tar.zst; git commit -a -m \'removed old " + package_name + " package\'\"").c_str());
+		system(("fish -c \"rm -rf *\'" + package_name + "\'*.pkg.tar.zst; git commit -a -m \'removed old " + package_name + " package\'\"").c_str());
 	}
 	
 	
@@ -231,20 +230,20 @@ void add_file_to_repo(const char* path)
 	default_();
 	
 	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + filename
-			+ "\'; fish configure.fish; git add *; git commit -m \'added " + filename + " package\'\"").c_str());
+			+ "\'; fish configure.fish; git commit -a -m \'added " + filename + " package\'\"").c_str());
 }
 
 void include_file_to_repo(const char* path)
 {
 	system(("fish -c \"fish unconfigure.fish; repo-add xor-crypto-repo.db.tar.gz \'" + std::string(path)
-			+ "\'; fish configure.fish; git add *; git commit -m \'included " + std::string(path) + " package\'\"").c_str());
+			+ "\'; fish configure.fish; git commit -a -m \'included " + std::string(path) + " package\'\"").c_str());
 }
 
 void delete_package_from_repo(const char* package_name)
 {
-	system(("fish -c \"git add *; fish unconfigure.fish; repo-remove xor-crypto-repo.db.tar.gz \'"
+	system(("fish -c \"fish unconfigure.fish; repo-remove xor-crypto-repo.db.tar.gz \'"
 			+ std::string(package_name) + "\'; fish configure.fish; rm -f \'" + std::string(package_name)
-			+ "\'*.pkg.tar.zst; git commit -m \'removed " + package_name + " package\'\"").c_str());
+			+ "\'*.pkg.tar.zst; git commit -a -m \'removed " + package_name + " package\'\"").c_str());
 }
 
 int main(int argc, char** argv)
