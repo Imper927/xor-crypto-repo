@@ -1,0 +1,12 @@
+./add-package add ~/CLionProjects/cstr-functions/cstr-functions-*.pkg.tar.zst
+./add-package add ~/qtprojects/display-menu/display-menu-*.pkg.tar.zst
+./add-package add ~/CLionProjects/fish-completions/fish-completions-*.pkg.tar.zst
+./add-package add ~/CLionProjects/inet-comm/inet-comm-*.pkg.tar.zst
+./add-package add ~/CLionProjects/kazkueme/kazkueme-*.pkg.tar.zst
+./add-package add ~/CLionProjects/level_editor/level-config-*.pkg.tar.zst
+./add-package add ~/CLionProjects/level_editor/editor_pkg/level-editor-*.pkg.tar.zst
+./add-package add ~/CLionProjects/log-console/log-console-*.pkg.tar.zst
+./add-package add ~/CLionProjects/lyricsinject/lyricsinject-*.pkg.tar.zst
+./add-package add ~/CLionProjects/sfml_triangle/sfml-triangle-5:2-2-x86_64.pkg.tar.zst
+./add-package add ~/CLionProjects/xor-crypto/xor-crypto-*.pkg.tar.zst
+./add-package add ~/CLionProjects/xor-crypto-token/xor-crypto-token-*.pkg.tar.zst
