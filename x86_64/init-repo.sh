@@ -10,3 +10,4 @@
 ./add-package add ~/CLionProjects/sfml_triangle/sfml-triangle-5:2-2-x86_64.pkg.tar.zst
 ./add-package add ~/CLionProjects/xor-crypto/xor-crypto-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/xor-crypto-token/xor-crypto-token-*.pkg.tar.zst
+./add-package add ~/qtprojects/kazkueme-qt/kazkueme-qt-*.pkg.tar.zst
