@@ -13,3 +13,4 @@
 ./add-package add ~/qtprojects/kazkueme-qt/kazkueme-qt-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/parse-arguments/parse-arguments-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/neuro/neuro-*.pkg.tar.zst
+./add-package add ~/CLionProjects/password-query/password-query-*.pkg.tar.zst
