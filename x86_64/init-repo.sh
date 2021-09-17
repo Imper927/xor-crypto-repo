@@ -15,3 +15,4 @@
 ./add-package add ~/CLionProjects/neuro/neuro-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/password-query/password-query-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/system-actions-logger/system-action-logger-*.pkg.tar.zst
+./add-package add ~/CLionProjects/timing/timing-*.pkg.tar.zst
