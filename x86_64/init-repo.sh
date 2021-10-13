@@ -16,3 +16,5 @@
 ./add-package add ~/CLionProjects/password-query/password-query-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/system-actions-logger/system-action-logger-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/timing/timing-*.pkg.tar.zst
+./add-package add ~/CLionProjects/xor-crypto-lib/xor-crypto-lib-*.pkg.tar.zst
+./add-package add ~/CLionProjects/kazkueme-comm/kazkueme-comm-*.pkg.tar.zst
