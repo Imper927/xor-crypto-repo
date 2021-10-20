@@ -185,7 +185,7 @@ void add_file_to_repo(const char* path)
 		epoch = epoch.substr(start);
 	}
 	
-	if (ask_for_deletion((package_name + " files").c_str()))
+	//if (ask_for_deletion((package_name + " files").c_str()))
 	{
 		system(("fish -c \"rm -rf *\'" + package_name + "\'*.pkg.tar.zst; git commit -a -m \'removed old " + package_name + " package\'\"").c_str());
 	}
