@@ -18,3 +18,4 @@
 ./add-package add ~/CLionProjects/timing/timing-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/xor-crypto-lib/xor-crypto-lib-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/kazkueme-comm/kazkueme-comm-*.pkg.tar.zst
+./add-package add ~/CLionProjects/simplify-expr/simplify-expr-*.pkg.tar.zst
