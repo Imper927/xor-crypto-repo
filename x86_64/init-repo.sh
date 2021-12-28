@@ -20,3 +20,4 @@
 ./add-package add ~/CLionProjects/kazkueme-comm/kazkueme-comm-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/simplify-expr/simplify-expr-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/expression-converter/expression-converter-*.pkg.tar.zst
+./add-package add ~/CLionProjects/cppjava_bench/cppjava-bench-*.pkg.tar.zst
