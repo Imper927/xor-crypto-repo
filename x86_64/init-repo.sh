@@ -22,4 +22,5 @@
 ./add-package add ~/CLionProjects/expression-converter/expression-converter-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/cppjava_bench/cppjava-bench-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/kazkueme-client/kazkueme-client-*.pkg.tar.zst
+./add-package add ~/CLionProjects/cppjava_bench/cppjava-bench-1:3-0-x86_64.pkg.tar.zst
 
