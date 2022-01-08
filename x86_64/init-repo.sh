@@ -7,7 +7,7 @@
 ./add-package add ~/CLionProjects/level_editor/editor_pkg/level-editor-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/log-console/log-console-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/lyricsinject/lyricsinject-*.pkg.tar.zst
-./add-package add ~/CLionProjects/sfml_triangle/sfml-triangle-5:2-2-x86_64.pkg.tar.zst
+./add-package add ~/CLionProjects/sfml_triangle/sfml-triangle-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/xor-crypto/xor-crypto-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/xor-crypto-token/xor-crypto-token-*.pkg.tar.zst
 ./add-package add ~/qtprojects/kazkueme-qt/kazkueme-qt-*.pkg.tar.zst
@@ -22,4 +22,4 @@
 ./add-package add ~/CLionProjects/expression-converter/expression-converter-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/cppjava_bench/cppjava-bench-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/kazkueme-client/kazkueme-client-*.pkg.tar.zst
-
+./add-package add ~/CLionProjects/ruled-object/ruled-object-*.pkg.tar.zst
