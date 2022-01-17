@@ -23,3 +23,4 @@
 ./add-package add ~/CLionProjects/cppjava_bench/cppjava-bench-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/kazkueme-client/kazkueme-client-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/ruled-object/ruled-object-*.pkg.tar.zst
+./add-package add ~/CLionProjects/execute-process-linux/execute-process-linux-*.pkg.tar.zst
