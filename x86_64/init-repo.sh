@@ -26,3 +26,4 @@
 ./add-package add ~/CLionProjects/execute-process-linux/execute-process-linux-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/linux-file-server-comm/linux-file-server-comm-*.pkg.tar.zst
 ./add-package add ~/CLionProjects/linux-file-server-server/linux-file-server-server-*.pkg.tar.zst
+./add-package add ~/CLionProjects/linux-file-server-client/linux-file-server-client-*.pkg.tar.zst
