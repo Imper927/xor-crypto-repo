@@ -30,3 +30,4 @@
 ./add-package add ~/CLionProjects/linux-file-server-client-qt/linux-file-server-client-qt-*-x86_64.pkg.tar.zst
 ./add-package add ~/CLionProjects/linear-vector/linear-vector-*-x86_64.pkg.tar.zst
 ./add-package add ~/CLionProjects/dws/dws-*-x86_64.pkg.tar.zst
+./add-package add ~/CLionProjects/port_flooder/port-flooder-*-x86_64.pkg.tar.zst
